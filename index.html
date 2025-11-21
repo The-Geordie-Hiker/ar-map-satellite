@@ -6,26 +6,40 @@
   <script src="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.umd.min.js"></script>
   <link href="https://cdn.maptiler.com/maptiler-sdk-js/latest/maptiler-sdk.css" rel="stylesheet" />
   <script src="https://cdn.maptiler.com/maptiler-ar-control/latest/maptiler-ar-control.umd.js"></script>
+  
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    /* Ensure AR button is always on top */
+  .maplibregl-ctrl-top-right { z-index: 9999; }
   </style>
 </head>
 <body>
   <div id="map"></div>
   <script>
-    // INSERT YOUR KEY BELOW
-    maptilersdk.config.apiKey = 'i3hSb55rRHssCn90cOq9';
+    // 1. CONFIGURATION
+    // Replace with your Key
+    maptilersdk.config.apiKey = 'YOUR_MAPTILER_API_KEY_HERE'; 
 
+    // 2. CREATE MAP
     const map = new maptilersdk.Map({
       container: 'map',
-      style: maptilersdk.MapStyle.OUTDOOR,
-      center: [8.5417, 47.3769], 
-      zoom: 12,
-      terrain: true, // Crucial for AR
-      geolocate: true
+      style: maptilersdk.MapStyle.OUTDOOR, // Best style for hikers
+      
+      // --- FIX 1: LOCATION (Tyne and Wear / Newcastle) ---
+      // Format is [Longitude, Latitude]
+      center: [-1.6177, 54.9783], 
+      zoom: 12, // Zoom level (10 = County, 12 = City, 15 = Street)
+      
+      // --- FIX 2: ENABLE 3D MODE ---
+      // AR *requires* terrain to be true, or it stays in 2D mode
+      terrain: true, 
+      terrainControl: true, // Adds a 3D toggle button
+      
+      geolocate: true // Asks user for their location
     });
 
+    // 3. ADD AR CONTROL
     const arControl = new maptilerarcontrol.MaptilerARControl();
     map.on('load', () => {
       map.addControl(arControl, 'top-right');
